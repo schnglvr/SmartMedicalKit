@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Medkit</title>
+    <style>
+        /* Reset and Base Styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5fafd;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            width: 100%;
+            background: url('https://i.pinimg.com/736x/81/ee/00/81ee0076a778b3c0c15893f25dc9a96b.jpg') no-repeat center/cover;
+            text-align: center;
+            padding: 50px 20px;
+            border-radius: 15px;
+            color: white;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1rem;
+        }
+
+        main {
+            width: 100%;
+            max-width: 800px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: #00796b;
+        }
+
+        .symptom-category {
+            margin-bottom: 20px;
+        }
+
+        .symptom-category h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: #004d40;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        button {
+            display: block;
+            margin: 20px auto 0;
+            padding: 10px 20px;
+            font-size: 1rem;
+            background: #00796b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #004d40;
+        }
+
+        .results {
+            margin-top: 20px;
+        }
+
+        .treatment {
+            background: #e0f2f1;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 5px solid #00796b;
+            margin-bottom: 15px;
+        }
+
+        footer {
+            margin-top: 20px;
+            padding: 10px;
+            background: #004d40;
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        footer p {
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Smart Medkit</h1>
+        <p>Quick advice for common illnesses and injuries</p>
+    </header>
+
+    <main>
+        <h2>Symptom Checker</h2>
+        <p>Select symptoms to get a quick diagnosis:</p>
+        <form id="symptomForm">
+            <div class="symptom-category">
+                <h3>Common Illnesses</h3>
+                <label><input type="checkbox" value="fever"> Fever</label>
+                <label><input type="checkbox" value="cough"> Cough</label>
+                <label><input type="checkbox" value="sore throat"> Sore Throat</label>
+                <label><input type="checkbox" value="dizziness"> Dizziness</label>
+                <label><input type="checkbox" value="sausea"> nausea</label>
+                <label><input type="checkbox" value="headache"> Headache</label>
+            </div>
+
+            <div class="symptom-category">
+                <h3>Injuries</h3>
+                <label><input type="checkbox" value="cut"> Cut</label>
+                <label><input type="checkbox" value="bruise"> Bruise</label>
+                <label><input type="checkbox" value="burn"> Burn</label>
+                <label><input type="checkbox" value="blisters"> Blisters</label>
+            </div>
+
+            <button type="button" onclick="diagnose()">Get Diagnosis</button>
+        </form>
+
+        <div id="diagnosisResults" class="results"></div>
+    </main>
+
+    <footer>
+        <p><strong>Note:</strong> This tool is for informational purposes only. Always consult a healthcare professional for medical advice.</p>
+    </footer>
+
+    <script>
+        const illnessesDatabase = [
+  {
+    "name": "Common Cold",
+    "symptoms": ["fever", "cough", "sore throat"],
+    "info": "A viral infection that targets the upper respiratory system.",
+    "treatment": "Stay hydrated, rest, and take over-the-counter medications like paracetamol.",
+    "prevention": "Wash hands frequently, avoid close contact with sick people.",
+    "tools": ["Warm water", "Salt (for gargling)", "Honey", "Ginger", "Lemon"],
+    "source": "https://www.mayoclinic.org/diseases-conditions/common-cold/symptoms-causes/syc-20351605"
+  },
+  {
+    "name": "Heat Exhaustion",
+    "symptoms": ["fever", "nausea", "confusion", "dizziness"],
+    "info": "A condition caused by prolonged exposure to high temperatures.",
+    "treatment": "Move to a cool environment, hydrate immediately, and use wet towels to lower body temperature.",
+    "prevention": "Stay hydrated, avoid extreme heat, and wear light clothing.",
+    "tools": ["Cold water", "Wet towels", "Electrolyte drinks"],
+    "source": "https://www.cdc.gov/disasters/extremeheat/warning.html"
+  },
+  {
+    "name": "Minor Cuts and Scrapes",
+    "symptoms": ["cut", "bleeding"],
+    "info": "A break in the skin often caused by sharp objects, leading to bleeding and risk of infection.",
+    "treatment": "Wash thoroughly with clean water, apply antiseptic, and cover with a bandage.",
+    "prevention": "Use protective gear when handling sharp objects.",
+    "tools": ["Clean water", "Soap", "Antiseptic", "Bandage"],
+    "source": "https://www.nhs.uk/conditions/cuts-and-grazes/"
+  },
+  {
+    "name": "Mild Burns",
+    "symptoms": ["redness", "pain", "blisters"],
+    "info": "Skin injury caused by heat, resulting in redness and pain.",
+    "treatment": "Cool the burn under running water for 10–15 minutes and apply aloe vera or honey.",
+    "prevention": "Use gloves or mitts when handling hot objects.",
+    "tools": ["Running water", "Aloe vera", "Honey", "Clean cloth"],
+    "source": "https://www.webmd.com/first-aid/tc/first-aid-burns-treatment-overview"
+  },
+  {
+    "name": "Seasonal Allergies",
+    "symptoms": ["sneezing", "itchy eyes", "runny nose"],
+    "info": "An overreaction of the immune system to allergens like pollen or dust.",
+    "treatment": "Take antihistamines and avoid allergen exposure.",
+    "prevention": "Keep windows closed during high pollen seasons.",
+    "tools": ["Antihistamines", "Saline spray", "Vacuum cleaner"],
+    "source": "https://www.aafa.org/allergy-facts/"
+  },
+  {
+    "name": "Stomach Ache",
+    "symptoms": ["abdominal pain", "bloating"],
+    "info": "Discomfort in the stomach area, often caused by overeating or indigestion.",
+    "treatment": "Drink warm water, avoid greasy foods, and take antacids if needed.",
+    "prevention": "Eat smaller meals and avoid spicy foods.",
+    "tools": ["Warm water", "Ginger tea", "Antacid"],
+    "source": "https://www.healthline.com/symptom/stomach-pain"
+  },
+  {
+    "name": "Food Poisoning",
+    "symptoms": ["nausea", "vomiting", "diarrhea"],
+    "info": "An illness caused by consuming contaminated food or drinks.",
+    "treatment": "Rehydrate, avoid solid foods initially, and consume bland foods.",
+    "prevention": "Cook food thoroughly and practice good hygiene.",
+    "tools": ["ORS solution", "Boiled water", "Plain rice"],
+    "source": "https://www.cdc.gov/foodsafety/symptoms.html"
+  },
+  {
+    "name": "Mild Dehydration",
+    "symptoms": ["thirst", "dry mouth", "fatigue"],
+    "info": "A condition where the body loses more water than it takes in.",
+    "treatment": "Drink plenty of water and eat water-rich foods.",
+    "prevention": "Stay hydrated, especially in hot weather.",
+    "tools": ["Water", "Cucumber", "Watermelon"],
+    "source": "https://www.medicalnewstoday.com/articles/dehydration"
+  },
+  {
+    "name": "Tension Headache",
+    "symptoms": ["headache", "neck pain", "fatigue"],
+    "info": "A common type of headache caused by stress or muscle tension.",
+    "treatment": "Relax in a quiet room, apply a cold compress, and stay hydrated.",
+    "prevention": "Practice good posture and manage stress.",
+    "tools": ["Cold compress", "Water", "Essential oils"],
+    "source": "https://www.mayoclinic.org/diseases-conditions/tension-headache/symptoms-causes/syc-20373224"
+  },
+  {
+    "name": "Insect Bite",
+    "symptoms": ["itching", "redness", "swelling"],
+    "info": "Skin irritation caused by insect stings or bites.",
+    "treatment": "Wash the area, apply ice, and use anti-itch cream.",
+    "prevention": "Use insect repellent and wear protective clothing.",
+    "tools": ["Ice pack", "Anti-itch cream", "Soap"],
+    "source": "https://www.nhs.uk/conditions/insect-bites-and-stings/"
+  },
+  {
+    "name": "Nosebleed",
+    "symptoms": ["bleeding from the nose"],
+    "info": "Bleeding caused by irritation or injury to the nasal lining.",
+    "treatment": "Pinch the nostrils and lean forward to stop bleeding.",
+    "prevention": "Keep nasal passages moist with saline spray.",
+    "tools": ["Saline spray", "Tissue", "Cold compress"],
+    "source": "https://www.medicalnewstoday.com/articles/249443"
+  },
+  {
+    "name": "Constipation",
+    "symptoms": ["difficulty passing stool", "abdominal discomfort"],
+    "info": "A condition where bowel movements are infrequent or hard to pass.",
+    "treatment": "Increase fiber intake, drink plenty of water, and exercise regularly.",
+    "prevention": "Maintain a balanced diet rich in fruits and vegetables.",
+    "tools": ["Water", "Fiber supplements", "Prunes"],
+    "source": "https://www.healthline.com/health/constipation"
+  }
+]
+;
+
+        const diagnose = () => {
+            const selectedSymptoms = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(input => input.value);
+            const matchedIllnesses = illnessesDatabase.filter(illness => selectedSymptoms.every(symptom => illness.symptoms.includes(symptom)));
+
+            const resultsContainer = document.getElementById('diagnosisResults');
+            resultsContainer.innerHTML = matchedIllnesses.length > 0
+                ? matchedIllnesses.map(illness => `
+                    <div class="treatment">
+                        <h4>${illness.name}</h4>
+                        <p><strong>Treatment:</strong> ${illness.treatment}</p>
+                        <p><strong>Prevention:</strong> ${illness.prevention}</p>
+                    </div>`).join('')
+                : '<p>No matches found. Please refine your selection.</p>';
+        };
+    </script>
+</body>
+
+</html>
